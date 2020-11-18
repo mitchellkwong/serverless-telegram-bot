@@ -35,6 +35,7 @@ def _request_handler(handler):
 			bot = bot = Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
 			update = Update.de_json(request.get_json(force=True), bot)
 			handler(update)
+		return 'ok'
 	return wrapper
 
 """
