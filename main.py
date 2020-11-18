@@ -23,8 +23,8 @@ def _redirect(request, endpoint):
 		r = requests.post(
 			url = endpoint,
 			json = request.get_json(force=True),
-			headers = request.headers,
-			params = request.args,
+			# headers = request.headers,
+			# params = request.args,
 		)
 		print(f'Redirect to {endpoint}:', r.status_code)
 	return dummy_handler
@@ -56,7 +56,7 @@ router
 ================================================================================
 """
 
-def start(update, context):
+def start(update, context=None):
 	"""Handler for the /start command"""
 	text = (
 		f'Hello {update.effective_user.first_name}!'
@@ -65,7 +65,7 @@ def start(update, context):
 	)
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-def help(update, context):
+def help(update, context=None):
 	"""Handler for the /help command"""
 	text = (
 		'Each of the following commands is handled in a seperate cloud function instance which automatically scales with usage.'
@@ -75,7 +75,7 @@ def help(update, context):
 	)
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-def error(update, context):
+def error(update, context=None):
 	"""Handler for any uncaught updates"""
 	text = (
 		'Telebots will take over the world'
