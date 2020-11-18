@@ -69,7 +69,7 @@ def help(update, context):
 	text = (
 		'Each of the following commands is handled in a seperate cloud function instance which automatically scales with usage.'
 		'Additionally, usage analytics are maintained by Google Cloud Platform for each function, allowing easy analysis of bot usage.' + '\n\n'
-		'**Commands**' + '\n'
+		'*Commands*' + '\n'
 		'/echo to make me repeat after you.' 
 	)
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
