@@ -20,12 +20,13 @@ def _redirect(request, endpoint):
 	def dummy_handler(update, context):
 		"""Doesn't handle the update! Instead, forwards a request containing the 
 		update JSON to the endpoint of a handler in a seperate cloud function"""
-		requests.post(
+		r = requests.post(
 			url = endpoint,
 			json = request.get_json(force=True),
 			headers = request.headers,
 			params = request.args,
 		)
+		print(f'Redirect to {endpoint}:', r.status_code)
 	return dummy_handler
 
 def _request_handler(handler):
@@ -33,7 +34,7 @@ def _request_handler(handler):
 		if request.method == 'POST':
 			bot = bot = Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
 			update = Update.de_json(request.get_json(force=True), bot)
-			handler(update, None)
+			handler(update)
 	return wrapper
 
 """
@@ -100,7 +101,7 @@ def router(request):
 	return 'ok'
 
 @_request_handler
-def echo(update, context):
+def echo(update, context=None):
 	"""Repeats the last message that was received"""
 	text = update.message.text
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
