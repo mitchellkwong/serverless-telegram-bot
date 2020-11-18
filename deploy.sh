@@ -3,16 +3,17 @@
 
 # router redirects webhook requests to dedicated handlers
 gcloud functions deploy router \
-  --source cinnabot-test/github_mitchellkwong_serverless-telegram-bot/main// \
+  --source https://source.developers.google.com/projects/cinnabot-test/repos/github_mitchellkwong_serverless-telegram-bot/moveable-aliases/testing/paths// \
   --runtime python38 \
-  # --env-vars-file env.yml \
+  --env-vars-file env.yml \
   --trigger-http \
   --allow-unauthenticated
 
 # echo repeats user messages
 gcloud functions deploy echo \
-  --source cinnabot-test/github_mitchellkwong_serverless-telegram-bot/main// \
+  --source https://source.developers.google.com/projects/cinnabot-test/repos/github_mitchellkwong_serverless-telegram-bot/moveable-aliases/testing/paths// \
   --runtime python38 \
   --env-vars-file env.yml \
   --trigger-http \
   --allow-unauthenticated
+
