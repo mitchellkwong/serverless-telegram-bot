@@ -1,6 +1,20 @@
 import os
 import requests
 import telegram
+from telegram import Bot, ParseMode, Update
+from telegram.ext import CommandHandler, Dispatcher
+
+"""
+================================================================================
+"Private" helper functions
+--------------------------------------------------------------------------------
+redirect
+- Dummy handler to forward a request to another cloud function.
+
+request_handler
+- Decorator to allow modify update handlers to accept requests.
+================================================================================
+"""
 
 def _redirect(request, endpoint):
 	def dummy_handler(update, context):
@@ -13,6 +27,32 @@ def _redirect(request, endpoint):
 			params = request.args,
 		)
 	return dummy_handler
+
+def _request_handler(handler):
+	def wrapper(request):
+		if request.method == 'POST':
+			bot = bot = Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
+			update = Update.de_json(request.get_json(force=True), bot)
+			handler(update, None)
+	return wrapper
+
+"""
+================================================================================
+Base Functions
+--------------------------------------------------------------------------------
+start
+- 
+
+help
+- 
+
+error
+- 
+
+router
+-
+================================================================================
+"""
 
 def start(update, context):
 	"""Handler for the /start command"""
@@ -33,21 +73,17 @@ def help(update, context):
 	)
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
-def echo(update, context):
-	"""Repeats the last message that was received"""
-	text = update.message.text
-	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
-
 def error(update, context):
 	"""Handler for any uncaught updates"""
-	text = """
-	"""
+	text = (
+		'Telebots will take over the world'
+	)
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 def router(request):
 	if request.method == 'POST':
 		# Initialize a dummy telebot to make use of dispatchers
-		bot = telegram.Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
+		bot = Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
 
 		# Initialize dispatcher for base functions
 		dispatcher = Dispatcher(bot, None, workers=0, use_context=True)
@@ -62,3 +98,9 @@ def router(request):
 		update = Update.de_json(request.get_json(force=True), bot)
 		dispatcher.process_update(update)
 	return 'ok'
+
+@_request_handler
+def echo(update, context):
+	"""Repeats the last message that was received"""
+	text = update.message.text
+	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
