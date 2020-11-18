@@ -45,7 +45,7 @@ def error(update, context):
 	update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 def router(request):
-	if request.type == 'POST':
+	if request.method == 'POST':
 		# Initialize a dummy telebot to make use of dispatchers
 		bot = telegram.Bot(token=os.environ['TELEGRAM_BOT_TOKEN'])
 
