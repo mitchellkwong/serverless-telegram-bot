@@ -17,7 +17,7 @@ request_handler
 """
 
 def _redirect(request, endpoint):
-	def dummy_handler(update, context):
+	def dummy_handler(update, context=None):
 		"""Doesn't handle the update! Instead, forwards a request containing the 
 		update JSON to the endpoint of a handler in a seperate cloud function"""
 		r = requests.post(
@@ -27,6 +27,7 @@ def _redirect(request, endpoint):
 			# params = request.args,
 		)
 		print(f'Redirect to {endpoint}:', r.status_code)
+		print(r.url)
 	return dummy_handler
 
 def _request_handler(handler):
@@ -100,6 +101,19 @@ def router(request):
 		update = Update.de_json(request.get_json(force=True), bot)
 		dispatcher.process_update(update)
 	return 'ok'
+
+"""
+================================================================================
+Additional Features
+--------------------------------------------------------------------------------
+These are features that you want to delegate seperate cloud function instances
+to. Each feature here scales independently of the rest of the code and receives
+its own set of analytics.
+
+echo
+- Repeats after a user
+================================================================================
+"""
 
 @_request_handler
 def echo(update, context=None):
